@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Geolocation Detection</title>
+</head>
+<body>
+    <div class="container">
+            <form id="location-form">
+                    <input type="text" id="location-input" class="form-control form-control-lg">
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                  </form>
+    <div id="addressOut"></div>
+    <div id="addresscomponents"></div> 
+        </div>
+
+        
+    
+    <script>
+        //geocode();
+        document.getElementById('location-form').addEventListener('submit', geocode);
+         
+
+        function geocode(e) {
+            e.preventDefault();
+            var location = document.getElementById('location-input').value;
+            axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+                params:{
+                    latlng : location,
+                    key: 'AIzaSyB4tcas9DJPoipH_zVjyomJXJhQRAM09-E'
+                }
+            }).then(function(response) {
+                console.log(response);
+
+                var address = response.data.results[0].formatted_address;
+                var addressOutput = `
+                <ul class="list-group">
+                <li class="list-group-item">${address}</li>
+                </ul>
+                `;
+
+                document.getElementById('addressOut').innerHTML = addressOutput;
+               
+              
+                var addressComponents = response.data.results[0].address_components;
+                var componentOutput = `<ul class="list-group">`;
+                for(var i = 0;i = addressComponents.length;i++){
+                    componentOutput += `
+                <li class="list-group-item"><strong>${addressComponents[i].type}</strong>:${addressComponents[i].long_name}</li> `;        
+                }
+                componentOutput += '</ul>';
+               
+                document.getElementById('addresscomponents').innerHTML = componentOutput;
+              
+            })
+              .catch(function(error){
+                console.log(error);
+              });
+        }
+        </script>
+</body>
+</html>
